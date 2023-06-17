@@ -2,12 +2,12 @@
 
 import dbConnect from "@/app/dbConnect";
 import Note from "@/app/model/note";
+import { redirect } from "next/navigation";
 
 // function to save or create todo
 export const newNote = async (e) => {
     let title = e.get("title")?.valueOf();
     let note = e.get("note")?.valueOf();
-
 
     try {
         dbConnect();
@@ -17,6 +17,7 @@ export const newNote = async (e) => {
     } catch (error) {
         console.error(error);
     }
+    redirect('/show')
 }
 
 
