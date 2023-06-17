@@ -1,11 +1,22 @@
 import React from "react";
 import Note from "../model/note";
 import dbConnect from "../dbConnect";
+import Link from "next/link";
+import { deleteNote } from "../edit/[id]/page";
+import { redirect } from "next/navigation";
 
 const Show = async () => {
   dbConnect();
   const notes = await Note.find();
-  console.log(notes);
+  // console.log(notes);
+
+  async function deleteNote(data) {
+    "use server";
+    let id = JSON.parse(data.get("id")?.valueOf());
+
+    await Note.deleteOne({ _id: id });
+    redirect("/show");
+  }
 
   return (
     <main className="m-10 space-y-5">
@@ -25,8 +36,21 @@ const Show = async () => {
                 <li className="flex-1">{note.note}</li>
                 <li className="flex-1">
                   <div className="flex">
-                    <button>Delete</button>
-                    <button>Edit</button>
+                    <form action={deleteNote}>
+                      <input
+                        type="hidden"
+                        value={JSON.stringify(note._id)}
+                        name="id"
+                      />
+                      <button className="p-2 m-2 bg-red-600 text-white hover:cursor-pointer">
+                        Delete
+                      </button>
+                    </form>
+                    <Link href={"/edit/" + note._id}>
+                      <button className="p-2 m-2 bg-blue-600 text-white hover:cursor-pointer">
+                        Edit
+                      </button>
+                    </Link>
                   </div>
                 </li>
               </ul>
